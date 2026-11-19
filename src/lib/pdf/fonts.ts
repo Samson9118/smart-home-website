@@ -1,30 +1,23 @@
 import { Font } from '@react-pdf/renderer';
-import path from 'node:path';
 
 let isRegistered = false;
 
 export function registerPdfFonts(): void {
   if (isRegistered) return;
 
+  // In Next.js client-side, fonts from public/fonts/ are available at /fonts/...
   const isBrowser = typeof window !== 'undefined';
-
-  const regularFontPath = isBrowser
-    ? `${window.location.origin}/fonts/Roboto-Regular.ttf`
-    : path.resolve(process.cwd(), 'public/fonts/Roboto-Regular.ttf');
-
-  const boldFontPath = isBrowser
-    ? `${window.location.origin}/fonts/Roboto-Bold.ttf`
-    : path.resolve(process.cwd(), 'public/fonts/Roboto-Bold.ttf');
+  const baseUrl = isBrowser && window.location?.origin ? window.location.origin : '';
 
   Font.register({
     family: 'Roboto',
     fonts: [
       {
-        src: regularFontPath,
+        src: `${baseUrl}/fonts/Roboto-Regular.ttf`,
         fontWeight: 'normal',
       },
       {
-        src: boldFontPath,
+        src: `${baseUrl}/fonts/Roboto-Bold.ttf`,
         fontWeight: 'bold',
       },
     ],

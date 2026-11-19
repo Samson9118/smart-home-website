@@ -56,12 +56,29 @@ export const LeadModal: React.FC<LeadModalProps> = ({
     }
 
     setIsSubmitting(true);
-    // Simulate API request (Stage 5 will connect live Telegram / MAX API)
     try {
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      const response = await fetch('/api/lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setErrors({
+          global: data.error || 'Произошла ошибка при отправке заявки. Попробуйте еще раз.',
+        });
+        return;
+      }
+
       setIsSuccess(true);
     } catch {
-      setErrors({ global: 'Произошла ошибка при отправке заявки. Пожалуйста, напишите нам напрямую.' });
+      setErrors({
+        global: 'Не удалось связаться с сервером. Пожалуйста, напишите нам в Telegram напрямую.',
+      });
     } finally {
       setIsSubmitting(false);
     }

@@ -86,10 +86,30 @@ export default function ContactsPage() {
 
     setIsSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      const response = await fetch('/api/lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name.trim(),
+          phone: phone.trim(),
+          messenger,
+          comment: comment.trim() || undefined,
+          honeypot,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setErrorMsg(data.error || 'Ошибка при отправке заявки. Попробуйте еще раз.');
+        return;
+      }
+
       setIsSuccess(true);
     } catch {
-      setErrorMsg('Ошибка отправки. Пожалуйста, напишите нам в Telegram напрямую.');
+      setErrorMsg('Не удалось связаться с сервером. Пожалуйста, напишите нам в Telegram напрямую.');
     } finally {
       setIsSubmitting(false);
     }

@@ -1,9 +1,16 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ContactsPage from '@/app/contacts/page';
 import { siteConfig } from '@/config/site';
 
 describe('ContactsPage Component', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ success: true }),
+    });
+  });
   it('renders direct contact channels and company phone', () => {
     render(<ContactsPage />);
     expect(screen.getByText(siteConfig.phone)).toBeInTheDocument();

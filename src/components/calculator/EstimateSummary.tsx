@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import {
-  FileDown,
   Send,
   Clock,
   ShieldCheck,
@@ -14,31 +13,20 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { EstimateResult } from '@/lib/calculator/types';
+import { PdfDownloadButton } from '@/components/pdf/PdfDownloadButton';
 
 interface EstimateSummaryProps {
   estimate: EstimateResult;
   onRequestLead: () => void;
-  onDownloadPdf?: () => void;
 }
 
 export const EstimateSummary: React.FC<EstimateSummaryProps> = ({
   estimate,
   onRequestLead,
-  onDownloadPdf,
 }) => {
   const [showDetails, setShowDetails] = useState(false);
 
   const totalDeviceUnits = estimate.equipment.reduce((sum, item) => sum + item.quantity, 0);
-
-  const handlePdfClick = () => {
-    if (onDownloadPdf) {
-      onDownloadPdf();
-    } else {
-      alert(
-        'Генерация PDF-сметы будет подключена на Этапе 3 через @react-pdf/renderer. Сейчас вы можете отправить смету инженеру для получения точного КП!'
-      );
-    }
-  };
 
   return (
     <aside className="sticky top-28 space-y-6">
@@ -109,14 +97,7 @@ export const EstimateSummary: React.FC<EstimateSummaryProps> = ({
             <span>Отправить смету инженеру</span>
           </button>
 
-          <button
-            type="button"
-            onClick={handlePdfClick}
-            className="w-full rounded-xl border border-cyan-500/40 bg-cyan-500/10 px-5 py-3 text-sm font-semibold text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-400 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
-          >
-            <FileDown className="h-4 w-4" />
-            <span>Скачать PDF-смету</span>
-          </button>
+          <PdfDownloadButton estimate={estimate} className="w-full" variant="secondary" />
         </div>
 
         {/* Guarantees */}

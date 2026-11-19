@@ -1,0 +1,40 @@
+﻿# Автоматическая нормализация текстовых файлов к LF при коммите
+* text=auto eol=lf
+
+# Исходный код, стили, разметка и документация
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.svg text eol=lf
+
+# Docker и shell-скрипты (критично для сборки на Linux VPS)
+Dockerfile text eol=lf
+*.dockerfile text eol=lf
+*.sh text eol=lf
+.env.example text eol=lf
+.gitignore text eol=lf
+
+# Windows-скрипты (оставляем CRLF)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Бинарные файлы (шрифты для PDF и сайта, изображения)
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.pdf binary

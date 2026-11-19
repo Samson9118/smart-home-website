@@ -1,0 +1,85 @@
+﻿# ==========================================
+# ЗАВИСИМОСТИ И СБОРКА (NEXT.JS / NODE.JS)
+# ==========================================
+node_modules/
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Сборка Next.js и standalone-вывод
+/.next/
+/out/
+/build/
+dist/
+
+# ==========================================
+# СЕКРЕТЫ И ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ
+# ==========================================
+# Исключаем все .env файлы с секретами, оставляя только шаблон .env.example
+.env
+.env*.local
+!.env.example
+
+# ==========================================
+# ТЕСТИРОВАНИЕ (VITEST / PLAYWRIGHT)
+# ==========================================
+/coverage/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# ==========================================
+# ЛОГИ И ВРЕМЕННЫЕ ФАЙЛЫ
+# ==========================================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.tsbuildinfo
+next-env.d.ts
+
+# ==========================================
+# WINDOWS 11 (СИСТЕМНЫЙ МУСОР)
+# ==========================================
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# ==========================================
+# IDE И РЕДАКТОРЫ (WEBSTORM / VSCODE / ANTIGRAVITY)
+# ==========================================
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ==========================================
+# VERCEL / ДЕПЛОЙ
+# ==========================================
+.vercel

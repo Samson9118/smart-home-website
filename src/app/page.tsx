@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import { Hero } from '@/components/home/Hero';
 import { DynamicDayCycle } from '@/components/home/DynamicDayCycle';
-import { ScenarioVideoPlayer } from '@/components/media/ScenarioVideoPlayer';
 import { InteractiveMeshDiagram } from '@/components/home/InteractiveMeshDiagram';
 import { WorkflowSteps } from '@/components/home/WorkflowSteps';
 import { Container } from '@/components/ui/Container';
@@ -116,10 +115,7 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* 4. Interactive Video Showcase with Real Sensor Timing */}
-      <ScenarioVideoPlayer />
-
-      {/* 5. Wireless Mesh Architecture */}
+      {/* 4. Wireless Mesh Architecture */}
       <InteractiveMeshDiagram />
 
       {/* 6. Knowledge Base & Protocol Articles Teaser */}

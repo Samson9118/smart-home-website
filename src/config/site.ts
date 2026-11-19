@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: 'SmartHome Lab',
+  name: process.env.NEXT_PUBLIC_COMPANY_NAME || 'SmartHome Lab',
   description: 'Проектирование и монтаж беспроводного умного дома (Zigbee, Matter, Thread, Home Assistant, Яндекс Алиса) на базе оборудования Aqara, Sonoff, Sprut и Tuya Zigbee.',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
   phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || '+7 (999) 000-00-00',

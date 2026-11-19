@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useRef } from 'react';
+import { Play, Pause, Volume2, VolumeX, Maximize2, RotateCcw } from 'lucide-react';
 
 export interface VideoScene {
   id: string;
   title: string;
   badge: string;
-  durationSec: number;
+  videoUrl: string;
   description: string;
   activeSensors: {
     name: string;
@@ -23,11 +23,10 @@ export interface VideoScene {
     title: string;
     detail: string;
   }[];
-  canvasVisual: {
-    bgColor: string;
-    ambientColor: string;
-    activeElements: string[];
+  hudElements: {
+    badges: string[];
     logLine: string;
+    statusColor: string;
   };
 }
 
@@ -36,7 +35,7 @@ const SCENES: VideoScene[] = [
     id: 'arrival',
     title: 'Сценарий: «Возвращение домой»',
     badge: 'Биометрия & Свет',
-    durationSec: 12,
+    videoUrl: '/videos/arrival.mp4',
     description: 'Открытие умного биометрического замка по отпечатку пальца запускает каскад: снятие с охраны, мягкий свет в прихожей, комфортная температура и любимый трек.',
     activeSensors: [
       {
@@ -73,18 +72,17 @@ const SCENES: VideoScene[] = [
       { timeSec: 7, title: '00:07 — Снятие охраны', detail: 'Камеры переходят в приватный режим (шторка закрыта)' },
       { timeSec: 10, title: '00:10 — Свет и климат', detail: 'Кондиционер переходит из Eco в Comfort 22°C' },
     ],
-    canvasVisual: {
-      bgColor: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
-      ambientColor: '#F59E0B',
-      activeElements: ['Замок разблокирован', 'Прихожая 3000K', 'Камеры: Шторка Privacy'],
+    hudElements: {
+      badges: ['Дверь: Разблокировано', 'Прихожая 3000K', 'Камеры: Шторка Privacy'],
       logLine: '[MQTT/Zigbee] Device "lock_front_door" unlocked by User: Master (fingerprint_1)',
+      statusColor: '#F59E0B',
     },
   },
   {
     id: 'leakage',
     title: 'Сценарий: «Защита от протечки (10 секунд)»',
     badge: 'Аварийная автоматика',
-    durationSec: 10,
+    videoUrl: '/videos/leakage.mp4',
     description: 'При попадании воды на электроды датчика умный дом мгновенно перекрывает подачу воды шаровыми кранами с сервоприводом и присылает экстренный алерт в Telegram.',
     activeSensors: [
       {
@@ -121,18 +119,17 @@ const SCENES: VideoScene[] = [
       { timeSec: 7, title: '00:07 — Стояки перекрыты', detail: 'Холодная и горячая вода полностью перекрыты' },
       { timeSec: 9, title: '00:09 — Экстренный алерт', detail: 'Сообщение отправлено в Telegram с точным адресом датчика' },
     ],
-    canvasVisual: {
-      bgColor: 'linear-gradient(135deg, #1e293b 0%, #312e81 100%)',
-      ambientColor: '#06B6D4',
-      activeElements: ['Датчик протечки ВАННА: ALARM', 'Краны: ЗАКРЫТО 100%', 'Telegram: Push отправлен'],
+    hudElements: {
+      badges: ['Датчик протечки: ALARM', 'Краны: ЗАКРЫТО 100%', 'Telegram: Push отправлен'],
       logLine: '[Binding Event] "leak_sensor_laundry" -> "valve_cold_water" STATE: CLOSED (Reason: LEAK)',
+      statusColor: '#06B6D4',
     },
   },
   {
     id: 'cinema',
     title: 'Сценарий: «Домашний кинотеатр»',
     badge: 'Атмосфера & Мультимедиа',
-    durationSec: 10,
+    videoUrl: '/videos/cinema.mp4',
     description: 'Одна голосовая команда «Алиса, включай кино» или нажатие беспроводной кнопки: шторы блэкаут опускаются, проектор выдвигается, а подсветка переходит в глубокий тёплый полумрак.',
     activeSensors: [
       {
@@ -169,11 +166,10 @@ const SCENES: VideoScene[] = [
       { timeSec: 6, title: '00:06 — Выключение люстр', detail: 'Плавный fade-out основного света за 3 секунды' },
       { timeSec: 9, title: '00:09 — Запуск Ambilight', detail: 'Включение мягкой задней подсветки ТВ на 15%' },
     ],
-    canvasVisual: {
-      bgColor: 'linear-gradient(135deg, #090d16 0%, #172554 100%)',
-      ambientColor: '#8B5CF6',
-      activeElements: ['Шторы: 0% Закрыты', 'Свет: Ambilight 15%', 'Проектор: ВКЛЮЧЕН'],
+    hudElements: {
+      badges: ['Шторы: 0% Закрыты', 'Свет: Ambilight 15%', 'Проектор: ВКЛЮЧЕН'],
       logLine: '[Scene Trigger] cinema_mode activated by Voice Assistant. Target room: Living Room',
+      statusColor: '#8B5CF6',
     },
   },
 ];
@@ -181,34 +177,73 @@ const SCENES: VideoScene[] = [
 export const ScenarioVideoPlayer: React.FC = () => {
   const [activeSceneIndex, setActiveSceneIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
-  const [progressSec, setProgressSec] = useState<number>(0);
+  const [isMuted, setIsMuted] = useState<boolean>(true);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(10);
   const [selectedSensorIdx, setSelectedSensorIdx] = useState<number>(0);
+
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const playerContainerRef = useRef<HTMLDivElement | null>(null);
 
   const scene = SCENES[activeSceneIndex];
 
-  // Playback timer ticker
-  useEffect(() => {
-    if (!isPlaying) return;
-    const interval = setInterval(() => {
-      setProgressSec((prev) => {
-        if (prev >= scene.durationSec) {
-          // loop or go to next scene
-          return 0;
-        }
-        return Number((prev + 0.5).toFixed(1));
-      });
-    }, 500);
-    return () => clearInterval(interval);
-  }, [isPlaying, scene.durationSec]);
-
-  // Reset progress when scene changes
-  const switchScene = (idx: number) => {
-    setActiveSceneIndex(idx);
-    setProgressSec(0);
-    setSelectedSensorIdx(0);
+  // Play/pause control
+  const togglePlay = () => {
+    if (isPlaying) {
+      videoRef.current?.pause();
+      setIsPlaying(false);
+    } else {
+      videoRef.current?.play().catch(() => {});
+      setIsPlaying(true);
+    }
   };
 
-  const progressPercent = Math.min(100, (progressSec / scene.durationSec) * 100);
+  // Mute control
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setIsMuted(videoRef.current.muted);
+    } else {
+      setIsMuted(!isMuted);
+    }
+  };
+
+  // Fullscreen
+  const toggleFullscreen = () => {
+    if (!playerContainerRef.current) return;
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    } else {
+      playerContainerRef.current.requestFullscreen().catch(() => {});
+    }
+  };
+
+  // Switch scene
+  const switchScene = (idx: number) => {
+    setActiveSceneIndex(idx);
+    setSelectedSensorIdx(0);
+    setCurrentTime(0);
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.load();
+      videoRef.current.play().catch(() => {});
+      setIsPlaying(true);
+    }
+  };
+
+  // Scrub timeline
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+    const targetSec = ratio * (duration || 10);
+    if (videoRef.current) {
+      videoRef.current.currentTime = targetSec;
+    }
+    setCurrentTime(targetSec);
+  };
+
+  const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <section className="py-20 bg-slate-950 text-white relative overflow-hidden">
@@ -222,8 +257,8 @@ export const ScenarioVideoPlayer: React.FC = () => {
             Сценарии и датчики в действии
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-400">
-            Посмотрите, как взаимодействуют между собой датчики, исполнительные реле и приводы.
-            Задержка передачи команд — менее 25 миллисекунд.
+            Реальные видеоролики срабатывания автоматики: посмотрите, как взаимодействуют датчики,
+            электроприводы и освещение со скоростью отклика менее 25 мс.
           </p>
         </div>
 
@@ -246,78 +281,95 @@ export const ScenarioVideoPlayer: React.FC = () => {
 
         {/* Video Player Container */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Main Visual Player Screen (8 cols) */}
-          <div className="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
-            {/* Screen Header / Simulated Camera feed */}
-            <div className="px-4 py-3 bg-slate-950 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400">
+          {/* Main Visual Video Player Screen (8 cols) */}
+          <div
+            ref={playerContainerRef}
+            className="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl relative flex flex-col justify-between"
+          >
+            {/* Screen Top Bar / HUD */}
+            <div className="px-4 py-3 bg-slate-950/90 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400 z-20">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
-                <span className="font-mono text-red-400 font-bold uppercase tracking-wider">LIVE SIMULATION 4K</span>
+                <span className="font-mono text-red-400 font-bold uppercase tracking-wider">
+                  REAL MP4 VIDEO
+                </span>
                 <span className="text-slate-600">|</span>
                 <span className="text-slate-300 font-semibold">{scene.badge}</span>
               </div>
               <div className="font-mono text-slate-400">
-                00:{String(Math.floor(progressSec)).padStart(2, '0')} / 00:{String(scene.durationSec).padStart(2, '0')}
+                00:{String(Math.floor(currentTime)).padStart(2, '0')} / 00:{String(Math.floor(duration || 10)).padStart(2, '0')}
               </div>
             </div>
 
-            {/* Simulated Animated Video Canvas */}
-            <div
-              className="relative min-h-[380px] sm:min-h-[440px] p-6 flex flex-col justify-between transition-colors duration-700"
-              style={{ background: scene.canvasVisual.bgColor }}
-            >
-              {/* Top Sensor Activity Badges */}
-              <div className="flex flex-wrap gap-2 z-10">
-                {scene.canvasVisual.activeElements.map((el, idx) => (
-                  <div
-                    key={idx}
-                    className="backdrop-blur-md bg-slate-950/80 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-medium text-white flex items-center gap-1.5 shadow"
-                  >
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    {el}
-                  </div>
-                ))}
-              </div>
+            {/* Video Canvas Container with Overlays */}
+            <div className="relative aspect-video w-full bg-black overflow-hidden flex items-center justify-center">
+              {/* Actual HTML5 Video Element */}
+              <video
+                ref={videoRef}
+                key={scene.videoUrl}
+                src={scene.videoUrl}
+                autoPlay
+                playsInline
+                loop
+                muted={isMuted}
+                onTimeUpdate={() => {
+                  if (videoRef.current) {
+                    setCurrentTime(videoRef.current.currentTime);
+                  }
+                }}
+                onLoadedMetadata={() => {
+                  if (videoRef.current) {
+                    setDuration(videoRef.current.duration || 10);
+                  }
+                }}
+                className="w-full h-full object-cover"
+              />
 
-              {/* Center Scene Animation Graphic */}
-              <div className="my-auto py-6 flex flex-col items-center justify-center text-center z-10">
-                <motion.div
-                  key={`${scene.id}-${progressSec > 5 ? 'second' : 'first'}`}
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.4 }}
-                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-slate-950/80 border-2 border-amber-500/50 shadow-2xl flex items-center justify-center text-4xl sm:text-5xl mb-4"
-                  style={{ boxShadow: `0 0 50px ${scene.canvasVisual.ambientColor}66` }}
-                >
-                  {scene.activeSensors[selectedSensorIdx]?.icon || '⚡'}
-                </motion.div>
-                <div className="text-xl sm:text-2xl font-black text-white">{scene.title}</div>
-                <div className="mt-2 text-xs sm:text-sm text-slate-300 max-w-md">
-                  {scene.description}
+              {/* Realtime Sensor HUD Overlay on top of Video */}
+              <div className="absolute inset-0 p-5 flex flex-col justify-between pointer-events-none z-10 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/40">
+                {/* Top Badges */}
+                <div className="flex flex-wrap gap-2">
+                  {scene.hudElements.badges.map((b, idx) => (
+                    <div
+                      key={idx}
+                      className="backdrop-blur-md bg-slate-950/80 border border-slate-700/70 px-3 py-1.5 rounded-lg text-xs font-medium text-white flex items-center gap-1.5 shadow"
+                    >
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      {b}
+                    </div>
+                  ))}
                 </div>
-              </div>
 
-              {/* Console log ticker */}
-              <div className="backdrop-blur-md bg-black/60 border border-slate-800 rounded-lg p-2.5 font-mono text-xs text-emerald-400 truncate z-10">
-                <span className="text-slate-500 mr-2">&gt;</span>
-                {scene.canvasVisual.logLine}
+                {/* Center Big Play Button (if paused) */}
+                {!isPlaying && (
+                  <div className="self-center pointer-events-auto">
+                    <button
+                      onClick={togglePlay}
+                      className="w-16 h-16 rounded-full bg-amber-500/90 text-slate-950 flex items-center justify-center shadow-2xl hover:scale-110 transition-transform"
+                      aria-label="Запустить видео"
+                    >
+                      <Play className="h-8 w-8 ml-1" />
+                    </button>
+                  </div>
+                )}
+
+                {/* Bottom Console Ticker on Video */}
+                <div className="backdrop-blur-md bg-black/75 border border-slate-800 rounded-lg p-2.5 font-mono text-xs text-emerald-400 truncate">
+                  <span className="text-slate-500 mr-2">&gt;</span>
+                  {scene.hudElements.logLine}
+                </div>
               </div>
             </div>
 
             {/* Playback Controls & Scrubber */}
-            <div className="p-4 bg-slate-950 border-t border-slate-800 space-y-3">
-              {/* Progress bar */}
+            <div className="p-4 bg-slate-950 border-t border-slate-800 space-y-3 z-20">
+              {/* Progress bar Scrubber */}
               <div
                 className="w-full bg-slate-800 h-2 rounded-full overflow-hidden cursor-pointer relative"
-                onClick={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const clickX = e.clientX - rect.left;
-                  const ratio = clickX / rect.width;
-                  setProgressSec(Number((ratio * scene.durationSec).toFixed(1)));
-                }}
+                onClick={handleSeek}
               >
                 <div
-                  className="h-full bg-gradient-to-r from-amber-500 to-cyan-400 transition-all duration-300"
+                  className="h-full bg-gradient-to-r from-amber-500 to-cyan-400 transition-all duration-100"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
@@ -326,20 +378,47 @@ export const ScenarioVideoPlayer: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={() => setIsPlaying(!isPlaying)}
+                    onClick={togglePlay}
                     className="w-9 h-9 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center justify-center font-bold transition-colors"
+                    aria-label={isPlaying ? 'Пауза' : 'Воспроизведение'}
                   >
-                    {isPlaying ? '⏸' : '▶'}
+                    {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
                   </button>
                   <button
-                    onClick={() => setProgressSec(0)}
-                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition-colors"
+                    onClick={() => {
+                      if (videoRef.current) {
+                        videoRef.current.currentTime = 0;
+                        videoRef.current.play().catch(() => {});
+                        setIsPlaying(true);
+                      }
+                      setCurrentTime(0);
+                    }}
+                    className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition-colors flex items-center gap-1.5"
+                    title="Сначала"
                   >
-                    Перемотка в начало
+                    <RotateCcw className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Сначала</span>
+                  </button>
+                  <button
+                    onClick={toggleMute}
+                    className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition-colors"
+                    title={isMuted ? 'Включить звук' : 'Выключить звук'}
+                  >
+                    {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4 text-amber-400" />}
                   </button>
                 </div>
-                <div className="text-xs text-slate-400">
-                  Кликните на прогресс-бар для быстрой перемотки
+
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-slate-400 hidden sm:inline">
+                    Кликните на прогресс-бар для перемотки
+                  </span>
+                  <button
+                    onClick={toggleFullscreen}
+                    className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition-colors"
+                    title="На весь экран"
+                  >
+                    <Maximize2 className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
             </div>

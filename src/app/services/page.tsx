@@ -130,6 +130,42 @@ export default function ServicesPage() {
                 <span>Консультация с инженером</span>
               </a>
             </div>
+
+            {/* Sub-specialization Navigation Pills */}
+            <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
+              <a
+                href="/services/lighting"
+                className="p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-amber-500/50 transition-all group"
+              >
+                <span className="text-xl">💡</span>
+                <div className="text-xs font-bold text-white mt-2 group-hover:text-amber-400">Умный свет</div>
+                <div className="text-[11px] text-slate-400">Циркадность & mmWave →</div>
+              </a>
+              <a
+                href="/services/climate"
+                className="p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-500/50 transition-all group"
+              >
+                <span className="text-xl">🌡</span>
+                <div className="text-xs font-bold text-white mt-2 group-hover:text-cyan-400">Климат-контроль</div>
+                <div className="text-[11px] text-slate-400">Теплый пол & CO2 →</div>
+              </a>
+              <a
+                href="/services/security"
+                className="p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 transition-all group"
+              >
+                <span className="text-xl">🛡</span>
+                <div className="text-xs font-bold text-white mt-2 group-hover:text-emerald-400">Защита от протечек</div>
+                <div className="text-[11px] text-slate-400">Краны 12V за 10 сек →</div>
+              </a>
+              <a
+                href="/services/surveillance"
+                className="p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-purple-500/50 transition-all group"
+              >
+                <span className="text-xl">📹</span>
+                <div className="text-xs font-bold text-white mt-2 group-hover:text-purple-400">Камеры & Замки</div>
+                <div className="text-[11px] text-slate-400">Локальный NVR архив →</div>
+              </a>
+            </div>
           </div>
         </Container>
       </section>

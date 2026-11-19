@@ -66,12 +66,32 @@ export default async function ArticleDetailPage({ params }: Props) {
           <div className="mt-6 p-6 rounded-2xl bg-slate-900 border-l-4 border-amber-500 text-slate-200 text-base sm:text-lg leading-relaxed">
             {article.content.lead}
           </div>
+
+          {/* Interactive Table of Contents */}
+          <div className="mt-8 p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2.5">
+            <div className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400">
+              Оглавление статьи:
+            </div>
+            <ul className="space-y-1.5 text-xs sm:text-sm text-slate-300">
+              {article.content.sections.map((sec, idx) => (
+                <li key={idx} className="flex items-center gap-2">
+                  <span className="text-amber-400 font-mono text-xs">{idx + 1}.</span>
+                  <a
+                    href={`#section-${idx}`}
+                    className="hover:text-amber-400 transition-colors underline decoration-slate-700 underline-offset-4"
+                  >
+                    {sec.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </header>
 
         {/* Article Body */}
         <div className="max-w-4xl mx-auto space-y-12">
           {article.content.sections.map((sec, idx) => (
-            <section key={idx} className="space-y-4">
+            <section key={idx} id={`section-${idx}`} className="space-y-4 scroll-mt-24">
               <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
                 {sec.title}
               </h2>

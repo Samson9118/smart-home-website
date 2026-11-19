@@ -10,7 +10,6 @@ import {
   Mic,
   FileText,
   CheckCircle2,
-  Send,
   Sparkles,
 } from 'lucide-react';
 import { siteConfig } from '@/config/site';
@@ -83,7 +82,7 @@ export const Hero: React.FC = () => {
             <span className="text-amber-400 font-medium">Яндекс Алиса</span> для управления голосом.
           </motion.p>
 
-          {/* Call-to-Action Buttons */}
+          {/* Call-to-Action Buttons: 2 главные кнопки с достаточным воздухом */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -97,7 +96,7 @@ export const Hero: React.FC = () => {
               icon={<Calculator className="h-5 w-5" />}
               className="w-full sm:w-auto"
             >
-              Рассчитать стоимость сметы
+              Рассчитать смету
             </Button>
 
             <Button
@@ -108,18 +107,8 @@ export const Hero: React.FC = () => {
               iconPosition="right"
               className="w-full sm:w-auto"
             >
-              Готовые комплекты
+              Услуги
             </Button>
-
-            <a
-              href={`https://t.me/${siteConfig.telegramBot}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-slate-700/80 bg-dark-800/80 px-5 py-3.5 text-sm font-semibold text-slate-200 hover:text-white hover:border-cyan-500/50 hover:bg-dark-700 transition-all"
-            >
-              <Send className="h-4 w-4 text-cyan-400" />
-              <span>Консультация инженера</span>
-            </a>
           </motion.div>
 
           {/* Supported Brands Bar */}

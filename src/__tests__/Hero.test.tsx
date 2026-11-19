@@ -11,14 +11,14 @@ describe('Hero component', () => {
 
   it('renders primary CTA button leading to calculator', () => {
     render(<Hero />);
-    const ctaButton = screen.getByRole('link', { name: /Рассчитать стоимость сметы/i });
+    const ctaButton = screen.getByRole('link', { name: /Рассчитать смету/i });
     expect(ctaButton).toBeInTheDocument();
     expect(ctaButton).toHaveAttribute('href', '/calculator');
   });
 
   it('renders secondary services button', () => {
     render(<Hero />);
-    const servicesButton = screen.getByRole('link', { name: /Готовые комплекты/i });
+    const servicesButton = screen.getByRole('link', { name: /^Услуги/i });
     expect(servicesButton).toBeInTheDocument();
     expect(servicesButton).toHaveAttribute('href', '/services');
   });

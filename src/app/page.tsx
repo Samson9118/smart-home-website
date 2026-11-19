@@ -6,18 +6,14 @@ import {
   ShieldAlert,
   Camera,
   ArrowRight,
-  BookOpen,
-  Radio,
   Calculator,
+  Cpu,
 } from 'lucide-react';
 import { Hero } from '@/components/home/Hero';
 import { CinematicRoomExperience } from '@/components/home/CinematicRoomExperience';
-import { InteractiveMeshDiagram } from '@/components/home/InteractiveMeshDiagram';
-import { WorkflowSteps } from '@/components/home/WorkflowSteps';
 import { Container } from '@/components/ui/Container';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { articles } from '@/data/articles';
 
 const CORE_SYSTEMS = [
   {
@@ -48,7 +44,7 @@ const CORE_SYSTEMS = [
     icon: Camera,
     href: '/services/surveillance',
     badge: 'Приватность 100%',
-    title: 'Камеры, домофоны и замки',
+    title: 'Видеонаблюдение и замки',
     desc: 'Биометрические смарт-замки Matter/Thread, умные домофоны с SIP и камеры с локальным хранилищем на NVR.',
     color: 'from-purple-500/20 to-purple-600/5 text-purple-400 border-purple-500/30 hover:border-purple-400',
   },
@@ -57,24 +53,24 @@ const CORE_SYSTEMS = [
 export default function HomePage() {
   return (
     <>
-      {/* 1. Modernized Hero */}
+      {/* 1. Hero: УТП + 2 главные кнопки («Рассчитать смету» и «Услуги») */}
       <Hero />
 
-      {/* 2. Interactive Scroll-driven Cinematic Room Day Cycle (06:00, 09:00, 18:00, 22:00) */}
+      {/* 2. Фотореалистичный Sticky Scroll-Driven блок «Один день в умном доме» */}
       <CinematicRoomExperience />
 
-      {/* 3. Core Systems Navigator (Разгруженные карточки с прямыми ссылками на новые страницы) */}
-      <section className="py-20 bg-slate-950 border-t border-slate-850">
+      {/* 3. Компактная сетка из 4 направлений услуг со ссылками на отдельные страницы */}
+      <section className="py-20 lg:py-24 bg-[#090D16] border-t border-slate-800/80">
         <Container>
-          <div className="mx-auto max-w-3xl text-center mb-12">
+          <div className="mx-auto max-w-2xl text-center mb-12 sm:mb-16">
             <Badge variant="amber" className="mb-3">
-              Четыре контура автоматизации
+              Инженерные направления
             </Badge>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-              Выберите инженерное направление
+              Четыре контура умного дома
             </h2>
             <p className="mt-4 text-base sm:text-lg text-slate-300">
-              Каждая система может работать автономно или объединяться в единый слаженный организм.
+              Выберите систему для детального ознакомления с оборудованием, схемами подключения и готовыми тарифами:
             </p>
           </div>
 
@@ -85,10 +81,10 @@ export default function HomePage() {
                 <Link
                   key={sys.title}
                   href={sys.href}
-                  className={`group relative p-6 rounded-2xl border bg-gradient-to-br ${sys.color} transition-all duration-300 flex flex-col justify-between hover:scale-[1.02] hover:shadow-xl`}
+                  className={`group relative p-6 sm:p-7 rounded-2xl border bg-gradient-to-br ${sys.color} transition-all duration-300 flex flex-col justify-between hover:scale-[1.02] hover:shadow-2xl`}
                 >
                   <div>
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center justify-between mb-5">
                       <div className="w-12 h-12 rounded-xl bg-slate-950/80 border border-white/10 flex items-center justify-center">
                         <Icon className="h-6 w-6" />
                       </div>
@@ -96,7 +92,7 @@ export default function HomePage() {
                         {sys.badge}
                       </span>
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">
+                    <h3 className="text-xl font-bold text-white mb-2.5 group-hover:text-amber-300 transition-colors">
                       {sys.title}
                     </h3>
                     <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
@@ -115,86 +111,30 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* 4. Wireless Mesh Architecture */}
-      <InteractiveMeshDiagram />
-
-      {/* 6. Knowledge Base & Protocol Articles Teaser */}
-      <section className="py-20 bg-slate-900/60 border-t border-slate-800">
-        <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-            <div className="lg:col-span-5 space-y-6">
-              <Badge variant="cyan">База знаний и протоколы</Badge>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                Учитесь и понимайте свой умный дом
-              </h2>
-              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                Мы открыто делимся 8-летним инженерным опытом: как устроена сеть Zigbee 3.0, чем отличается Matter от Thread,
-                как смонтировать реле без нуля и почему mmWave радары превосходят обычные датчики движения.
-              </p>
-              <div className="flex flex-wrap gap-4 pt-2">
-                <Link href="/knowledge">
-                  <Button variant="primary" size="md" icon={<BookOpen className="h-4 w-4" />}>
-                    Гид по монтажу датчиков
-                  </Button>
-                </Link>
-                <Link href="/articles">
-                  <Button variant="secondary" size="md" icon={<Radio className="h-4 w-4" />}>
-                    Все статьи о протоколах
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {articles.slice(0, 2).map((art) => (
-                <div
-                  key={art.slug}
-                  className="p-6 rounded-2xl bg-slate-950 border border-slate-800 hover:border-amber-500/50 transition-all flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider mb-2">
-                      {art.readingTime} чтения • {art.category}
-                    </div>
-                    <h3 className="text-base font-bold text-white mb-2 line-clamp-2">
-                      <Link href={`/articles/${art.slug}`} className="hover:text-amber-400">
-                        {art.title}
-                      </Link>
-                    </h3>
-                    <p className="text-xs text-slate-400 line-clamp-3 leading-relaxed mb-4">
-                      {art.summary}
-                    </p>
-                  </div>
-                  <Link
-                    href={`/articles/${art.slug}`}
-                    className="text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
-                  >
-                    Читать статью →
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* 7. Turnkey Workflow Steps */}
-      <WorkflowSteps />
-
-      {/* 8. Interactive Calculator CTA Banner */}
-      <section className="py-16 bg-gradient-to-b from-slate-950 to-slate-900 border-t border-slate-800 text-center">
+      {/* 4. Короткий лаконичный финальный CTA-блок перехода в калькулятор сметы */}
+      <section className="py-20 bg-gradient-to-b from-[#090D16] to-[#0D1322] border-t border-slate-800 text-center relative overflow-hidden">
         <Container>
           <div className="max-w-3xl mx-auto space-y-6">
-            <h2 className="text-3xl sm:text-4xl font-black text-white">
-              Рассчитайте персональную смету за 2 минуты
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-wider">
+              <Cpu className="h-3.5 w-3.5" />
+              <span>Расчёт спецификации за 2 минуты</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight">
+              Готовы узнать стоимость вашего умного дома?
             </h2>
-            <p className="text-slate-300 text-base">
-              Укажите площадь, количество комнат и выберите бренд оборудования.
-              Мгновенный расчёт стоимости оборудования, монтажа и скачивание PDF-сметы.
+            <p className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+              Укажите тип объекта, площадь и количество комнат. Наш онлайн-калькулятор мгновенно подберёт
+              реле, датчики и хабы с точной сметой и возможностью скачать PDF.
             </p>
-            <div className="pt-2">
+            <div className="pt-3 flex flex-wrap justify-center gap-4">
               <Link href="/calculator">
                 <Button size="lg" icon={<Calculator className="h-5 w-5" />}>
-                  Открыть онлайн-калькулятор сметы
+                  Рассчитать PDF-смету
+                </Button>
+              </Link>
+              <Link href="/services">
+                <Button variant="outline" size="lg">
+                  Все тарифы и услуги →
                 </Button>
               </Link>
             </div>

@@ -98,6 +98,35 @@ export const KnowledgeView: React.FC = () => {
             <p className="mt-3 text-base text-slate-300 leading-relaxed">{activeGuide.description}</p>
           </div>
 
+          {/* Comparison Matrix Table if available */}
+          {activeGuide.comparisonTable && (
+            <div className="space-y-3">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-2">
+                <span>📊</span> {activeGuide.comparisonTable.caption}
+              </h3>
+              <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950/80">
+                <table className="w-full text-left text-xs sm:text-sm">
+                  <thead className="border-b border-slate-800 bg-slate-900/90 text-cyan-400 font-mono uppercase tracking-wider text-[11px]">
+                    <tr>
+                      {activeGuide.comparisonTable.headers.map((h, hIdx) => (
+                        <th key={hIdx} className="p-3 sm:p-4 font-bold">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/70 text-slate-300">
+                    {activeGuide.comparisonTable.rows.map((row, rIdx) => (
+                      <tr key={rIdx} className="hover:bg-slate-900/40 transition-colors">
+                        <td className="p-3 sm:p-4 font-semibold text-white whitespace-nowrap">{row[0]}</td>
+                        <td className="p-3 sm:p-4 text-slate-300">{row[1]}</td>
+                        <td className="p-3 sm:p-4 text-emerald-400 font-medium">{row[2]}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
           {/* Steps */}
           <div className="space-y-6">
             <h3 className="text-lg font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">

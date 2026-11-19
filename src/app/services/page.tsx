@@ -10,6 +10,8 @@ import { Container } from '@/components/ui/Container';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { ScenarioSwitcher } from '@/components/services/ScenarioSwitcher';
+import { WorkflowSteps } from '@/components/home/WorkflowSteps';
+import { InteractiveMeshDiagram } from '@/components/home/InteractiveMeshDiagram';
 import { siteConfig } from '@/config/site';
 
 export const metadata: Metadata = {
@@ -284,6 +286,12 @@ export default function ServicesPage() {
           </div>
         </Container>
       </section>
+
+      {/* 5. Беспроводная Mesh-архитектура */}
+      <InteractiveMeshDiagram />
+
+      {/* 6. Пошаговые этапы работ под ключ */}
+      <WorkflowSteps />
     </div>
   );
 }

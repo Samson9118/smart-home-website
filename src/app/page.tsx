@@ -11,7 +11,7 @@ import {
   Calculator,
 } from 'lucide-react';
 import { Hero } from '@/components/home/Hero';
-import { DynamicDayCycle } from '@/components/home/DynamicDayCycle';
+import { CinematicRoomExperience } from '@/components/home/CinematicRoomExperience';
 import { InteractiveMeshDiagram } from '@/components/home/InteractiveMeshDiagram';
 import { WorkflowSteps } from '@/components/home/WorkflowSteps';
 import { Container } from '@/components/ui/Container';
@@ -60,8 +60,8 @@ export default function HomePage() {
       {/* 1. Modernized Hero */}
       <Hero />
 
-      {/* 2. Interactive Scroll-driven Day Cycle Lighting Experience */}
-      <DynamicDayCycle />
+      {/* 2. Interactive Scroll-driven Cinematic Room Day Cycle (06:00, 09:00, 18:00, 22:00) */}
+      <CinematicRoomExperience />
 
       {/* 3. Core Systems Navigator (Разгруженные карточки с прямыми ссылками на новые страницы) */}
       <section className="py-20 bg-slate-950 border-t border-slate-850">

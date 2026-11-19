@@ -1,0 +1,13 @@
+.git
+.gitignore
+.gitattributes
+node_modules
+.next
+coverage
+test-results
+*.log
+.env
+.env*.local
+README.md
+AGENTS.md
+ROADMAP.md

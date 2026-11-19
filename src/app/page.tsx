@@ -10,6 +10,8 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { Hero } from '@/components/home/Hero';
+import { InteractiveMeshDiagram } from '@/components/home/InteractiveMeshDiagram';
+import { WorkflowSteps } from '@/components/home/WorkflowSteps';
 import { Container } from '@/components/ui/Container';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -118,6 +120,9 @@ export default function HomePage() {
         </Container>
       </section>
 
+      {/* Interactive Mesh Network Diagram */}
+      <InteractiveMeshDiagram />
+
       {/* Trust & Brands Section */}
       <section className="py-16 lg:py-20 border-t border-slate-800/80">
         <Container>
@@ -187,6 +192,9 @@ export default function HomePage() {
           </div>
         </Container>
       </section>
+
+      {/* Turnkey Workflow Steps */}
+      <WorkflowSteps />
     </>
   );
 }
